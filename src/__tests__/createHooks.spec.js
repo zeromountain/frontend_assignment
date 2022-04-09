@@ -23,6 +23,7 @@ describe('createHooks test', () => {
       function callback() {
         const [, setA] = useState('foo');
         callCount += 1;
+
         return { setA };
       }
 
