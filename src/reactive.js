@@ -1,17 +1,31 @@
-// subscriber
-export function observe() {}
+let currentObserver = null;
+// 학생
+export function observe(fn) {
+  // console.log('observe 함수 실행');
+  currentObserver = fn;
+  fn();
+  currentObserver = null;
+  // console.log('observe 함수 종료');
+}
 
-// publish
-export function observable(initialState) {
-  // 탐색 목록, state, 구독관리, 구독알림
-  const observers = [];
-  return {
-    state: initialState || null,
-    subscribe: (listener) => observers.push(listener) - 1,
-    unsubscribe: (idx) => observers.splice(idx, 1),
-    notify: (newState) => {
-      this.state = newState;
-      observers.forEach((observer) => observer(newState));
-    },
-  };
+// observable 함수를 통해 생성된 객체
+export function observable(obj) {
+  Object.keys(obj).forEach((key) => {
+    let _value = obj[key]; // obj[a], obj[b]
+    const observers = new Set();
+
+    Object.defineProperty(obj, key, {
+      get() {
+        if (currentObserver) observers.add(currentObserver);
+        return _value;
+      },
+      set(value) {
+        // console.log(_value, value);
+        _value = value;
+        observers.forEach((fn) => fn());
+      },
+    });
+  });
+  // console.log(obj);
+  return obj;
 }

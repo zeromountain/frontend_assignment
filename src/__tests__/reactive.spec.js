@@ -7,29 +7,33 @@ async function wait(time = 1000 / 60) {
 describe('reactive test', () => {
   it('observable로 만든 객체가 observe 내에서 사용될 경우', async () => {
     const state = observable({ a: 1, b: 2 });
+    console.log(state.a, state.b);
 
     let computed = '';
+    // update
     function compute() {
+      // console.log('compute 함수 실행');
       computed = `a + b = ${state.a + state.b}`;
+      // console.log(computed);
+      // console.log('compute 함수 종료');
     }
 
     observe(compute);
 
     expect(computed).toBe(`a + b = 3`);
 
-    state.a = 10;
+    state.a = 10; // set
 
     expect(computed).toBe(`a + b = 12`);
 
     await wait();
-    state.b = 20;
+    state.b = 20; // set
 
     expect(computed).toBe(`a + b = 30`);
   });
 
   it('똑같은 값을 할당할 경우, 실행하지 않음', async () => {
     const { state } = observable({ a: 1, b: 2 });
-    console.log(state);
 
     let computed = '';
     let callCount = 0;
